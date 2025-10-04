@@ -1,0 +1,94 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 2.5em;
+}
+
+.promisesHolder {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.quoteHolder {
+    background-color: #ffffff;
+    border-left: 5px solid #2ea13d;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out;
+}
+
+.quoteHolder:hover {
+    transform: translateY(-5px);
+}
+
+.quoteText {
+    font-size: 1.1em;
+    font-style: italic;
+    color: #555;
+    margin: 0 0 15px 0;
+}
+
+.quoteAuthor {
+    font-size: 1em;
+    font-weight: bold;
+    color: #2ea13d;
+    text-align: right;
+    margin: 0;
+}
+
+.error p {
+    color: #e74c3c;
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: bold;
+    grid-column: 1 / -1; 
+}
+
+
+.asyncHolder {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dogCard {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden; /* Ensures the image inside respects the border-radius */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dogCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.dogCard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This makes the image cover the card area without distortion */
+    display: block;
+}
