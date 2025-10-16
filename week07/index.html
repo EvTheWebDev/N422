@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Node.js Chat</title>
+ 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center p-8">
+
+  <!-- Step 1: Page title -->
+  <h1 class="text-3xl text-blue-400 mb-6">Simple Chat</h1>
+  <!-- Explanation: This is the heading of our chat page -->
+
+  <!-- Step 2: Chat display box -->
+  <div id="chat" class="w-96 h-72 border border-blue-400 p-2 overflow-y-scroll mb-4 bg-gray-800">
+
+  </div>
+
+  <!-- Step 3: Input field and send button container -->
+  <div class="flex space-x-2">
+    <input
+      id="msg"
+      type="text"
+      placeholder="Type your message..."
+      class="w-80 p-2 text-black rounded focus:outline-none"
+
+    />
+    <button
+      id="send"
+      class="px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-500 cursor-pointer"   >
+      Send
+    </button>
+  </div>
+
+  <!-- Step 4: JavaScript for WebSocket communication -->
+<script>
+  // Step 4a: Connect to WebSocket server
+  // 'ws://localhost:8080' is the address where our Node.js server is running
+  // WebSocket is a built-in JavaScript object for real-time communication
+  const socket = new WebSocket('ws://localhost:8080')
+
+  // Step 4b: Get references to HTML elements
+  // We need to interact with these elements in JavaScript
+  const chatBox = document.getElementById('chat') // this div will show all chat messages
+  const msgInput = document.getElementById('msg') // input box where user types message
+  const sendBtn = document.getElementById('send') // button to send the message
+
+  // Step 4c: Handle incoming messages from server
+  // 'socket.onmessage' is an event listener
+  // It is automatically triggered whenever the server sends a message to this client
+  socket.onmessage = (event) => {
+    // Step 4c-1: Create a new div element for the incoming message
+    // 'document.createElement("div")' creates an empty <div> element in memory
+    const message = document.createElement('div')
+
+    // Step 4c-2: Set the text inside the new div to the received message
+    // 'event.data' contains the message sent from the server
+    // 'textContent' is a property that sets or returns the text inside an element
+    message.textContent = event.data
+
+    // Step 4c-3: Add the new message div to the chat box
+    // 'appendChild' is a method that adds a new element as the last child of a parent element
+    // Here, we are adding the new message to the bottom of the chat display
+    chatBox.appendChild(message)
+
+    // Step 4c-4: Automatically scroll the chat box to show the newest message
+    // 'scrollTop' is the distance from the top of the element's content that is visible
+    // 'scrollHeight' is the total height of the element's content, including content not visible
+    // Setting scrollTop = scrollHeight scrolls the chat box to the bottom
+    chatBox.scrollTop = chatBox.scrollHeight
+  }
+
+  // Step 4d: Send message to server when send button is clicked
+  sendBtn.onclick = () => {
+    // Only send if input box is not empty
+    if (msgInput.value.trim() !== '') {
+      // 'socket.send()' sends the message to the server
+      socket.send(msgInput.value)
+
+      // Clear the input box after sending
+      // This makes it ready for typing the next message
+      msgInput.value = ''
+    }
+  }
+
+  // Step 4e: Allow pressing Enter key to send message
+  // 'addEventListener' attaches an event to an element
+  // Here we listen for the 'keydown' event (any key pressed while typing)
+  msgInput.addEventListener('keydown', (e) => {
+    // 'e.key' gives the name of the key pressed
+    // If the Enter key is pressed, we trigger the send button click
+    if (e.key === 'Enter') sendBtn.click()
+  })
+</script>
+
+</body>
+</html>
+
