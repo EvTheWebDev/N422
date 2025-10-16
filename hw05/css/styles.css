@@ -1,0 +1,66 @@
+/* --- Global Styles --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: #f4f4f9; /* Light background for the page */
+    color: #333;
+}
+
+h1 {
+    color: #1a73e8; /* Google-like blue for the main heading */
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* --- Catalog Container Styles --- */
+.catalog-container {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.catalog-container h3 {
+    color: #3c4043; /* Darker text for section headings */
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+}
+
+/* --- List & Item Styles --- */
+.catalog-container ul {
+    list-style-type: none; /* Remove default bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+.catalog-container li {
+    padding: 10px 0;
+    line-height: 1.5;
+    border-bottom: 1px dotted #e0e0e0;
+}
+
+.catalog-container li:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+/* Emphasize the Title (italicized) and item type (bolded in JS) */
+em {
+    font-style: italic;
+    font-weight: 600; /* A bit heavier to stand out */
+    color: #00796b; /* Teal color for the title */
+}
+
+/* Style for the Total Value Summary */
+.catalog-container p strong {
+    display: block; /* Make it take its own line */
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 2px solid #1a73e8; /* Blue line above the total */
+    font-size: 1.2em;
+    color: #d93025; /* Red color to highlight the total value */
+}
