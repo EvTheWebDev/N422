@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electron Demo</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <h3>List Creator App</h3>
+    <form id="linkForm">
+      <label for="titleInput">Title:</label>
+      <input
+        type="text"
+        id="titleInput"
+        placeholder="Enter a Title..."
+        required
+      />
+      <label for="descInput">Description:</label>
+      <textarea
+        name="desc"
+        id="descInput"
+        placeholder="Enter your Description..."
+      ></textarea>
+      <button id="createButton" type="submit">Create a Button(?)</button>
+    </form>
+
+    <h2>Link List</h2>
+    <div id="linkList"></div>
+
+    <div id="page-view">
+      <h3 id="page-title"></h3>
+      <p id="page-desc"></p>
+      <button id="backBtn">Back to Link</button>
+    </div>
+    <script>
+        const linkForm = document.getElementById("linkForm");
+        const titleInput = document.getElementById("titleInput");
+        const descInput = document.getElementById("descInput");
+        const createButton = document.getElementById("createButton");
+        const linkList = document.getElementById("linkList");
+        const pageView = document.getElementById("page-view");
+        const pageTitle = document.getElementById("page-title");
+        const pageDesc = document.getElementById("page-desc");
+        const backBtn = document.getElementById("backBtn");
+        
+        const links = [];
+
+        createButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            const title = titleInput.value.trim();
+            const desc = descInput.value.trim();
+            if(!title || !desc) {
+                alert("Please fill in both fields.");
+                return;
+            }
+            const linkData = {title,desc} 
+            links.push(linkData);
+
+            const linkElement = document.createElement("div");
+            linkElement.textContent = title;
+
+            linkElement.addEventListener('click', () => showPage(linkData));
+            linkList.appendChild(linkElement);
+
+            linkForm.reset();
+        })
+
+        function showPage(linkData) {
+            pageTitle.textContent = linkData.title;
+            pageDesc.textContent = linkData.desc;
+            pageView.style.display = 'block';
+            linkList.style.display = 'none';
+        }
+
+        backBtn.addEventListener('click', () => {
+            pageView.style.display = 'none';
+            linkList.style.display = 'block';
+        })
+        
+    </script>
+  </body>
+</html>
