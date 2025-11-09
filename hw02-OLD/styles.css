@@ -1,0 +1,34 @@
+* {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+}
+h1, h2, h3, h4, h5, h6, p {
+ margin-bottom: 16px;
+}
+
+.siteContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 20px;
+}
+
+#myForm {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: antiquewhite;
+    
+}
+
+#display {
+    display: none;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: antiquewhite;
+}
