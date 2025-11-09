@@ -1,0 +1,15 @@
+{
+  "name": "week09",
+  "version": "1.0.0",
+  "description": "A Electron Project (Again) with new features! Features include: Drag and Drop, ",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^39.1.0"
+  }
+}
