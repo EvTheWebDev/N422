@@ -1,0 +1,59 @@
+/* src/MarkupEditor.css */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full window height */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.toolbar {
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.save-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+/* THE CORE LAYOUT */
+.split-screen-container {
+  display: flex; /* This puts the two panels side-by-side */
+  flex: 1;       /* Takes up remaining height */
+  overflow: hidden; /* Prevents double scrollbars */
+}
+
+/* LEFT PANEL */
+.raw-editor {
+  width: 50%;
+  border: none;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 16px;
+  resize: none; /* User shouldn't resize this manually */
+  outline: none;
+  background-color: #fafafa;
+}
+
+/* RIGHT PANEL */
+.preview-panel {
+  width: 50%;
+  padding: 20px;
+  overflow-y: auto; /* Allow scrolling */
+  background-color: #fff;
+}

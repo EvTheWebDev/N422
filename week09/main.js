@@ -17,6 +17,33 @@ function createWindow() {
   win.loadFile("index.html");
 }
 
-const iconNanme = path.join(__dirname, "dndIcon.png");
+const iconName = path.join(__dirname, "dndIcon.png");
 
 const icon = fs.createWriteStream(iconName);
+
+fs.writeFileSync(path.join(__dirname, "dndFile.md"), "# First Test File");
+
+http.get("https://img.icon8.com/ios/452/drag-and-drop.png", (Response) => {
+  Response.pipe(icon);
+});
+
+app.whenReady().then(createWindow);
+
+ipcMain.on("ondragstart", (event, filePath) => {
+  event.sender.startDrag({
+    file: filePath,
+    icon: iconName,
+  });
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
