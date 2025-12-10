@@ -18,7 +18,7 @@ export function StartScreen({ onCreateNew, onImport }) {
           <button className="btn-secondary" onClick={onImport}>
             📂 Import .md File
           </button>
-        </div>
+        </div> 
       </div>
     </div>
   );

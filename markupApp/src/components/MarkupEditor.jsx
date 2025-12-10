@@ -7,7 +7,7 @@ export function MarkupEditor({ markdownSource, fileName, onBack, onContentChange
   const [markdown, setMarkdown] = useState(markdownSource || '');
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const isTypingRef = useRef(false);
-  const textareaRef = useRef(null);
+  const textareaRef = useRef(null); 
   const cursorRef = useRef(null);
 
   // --- SAVE FUNCTION ---
