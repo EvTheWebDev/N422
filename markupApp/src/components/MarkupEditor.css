@@ -1,9 +1,7 @@
-/* src/MarkupEditor.css */
-
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full window height */
+  height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -24,36 +22,104 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.back-button {
+  background-color: #c0c0c0;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.back-button:hover {
+  background-color: #a0a0a0;
 }
 
 .save-button:hover {
   background-color: #0056b3;
 }
 
-/* THE CORE LAYOUT */
 .split-screen-container {
-  display: flex; /* This puts the two panels side-by-side */
-  flex: 1;       /* Takes up remaining height */
-  overflow: hidden; /* Prevents double scrollbars */
+  display: flex; 
+  flex: 1;     
+  overflow: hidden; 
 }
 
-/* LEFT PANEL */
 .raw-editor {
-  width: 50%;
   border: none;
   border-right: 1px solid #ccc;
-  padding: 20px;
   font-family: 'Consolas', 'Courier New', monospace;
   font-size: 16px;
-  resize: none; /* User shouldn't resize this manually */
+  resize: none; 
   outline: none;
   background-color: #fafafa;
 }
 
-/* RIGHT PANEL */
-.preview-panel {
-  width: 50%;
-  padding: 20px;
-  overflow-y: auto; /* Allow scrolling */
+.panel {
+    width: 50%;
+    padding: 20px;
+}
+
+.preview-panel {  
+  overflow-y: auto; 
   background-color: #fff;
+}
+
+.editor-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  
+  gap: 5px;
+  margin-bottom: 10px;
+  background: #eee;
+  padding: 5px;
+  border-radius: 4px;
+  flex-wrap: wrap;
+}
+
+.style-button {
+  padding: 4px 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 3px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background-color: #ccc;
+  margin: 0 5px;
+}
+
+.style-button.active {
+  background: #333;
+  color: white;
+  border-color: #333;
+}
+
+.style-button:hover {
+  background-color: #ddd;
+}
+
+@media (max-width:800px) {
+    .split-screen-container {
+        flex-direction: column;
+        width: 100%;
+
+    }
+    .panel {
+        width: 100%;
+        min-height: 30%;
+        box-sizing: border-box;
+    }
 }

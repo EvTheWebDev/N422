@@ -1,96 +1,154 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+import React, { useState, useEffect, useRef } from 'react';
+import { Editor, EditorState, convertToRaw, convertFromRaw, RichUtils } from 'draft-js';
 import { markdownToDraft, draftToMarkdown } from 'markdown-draft-js';
-import './MarkupEditor.css'; // Assuming you have a CSS file for styling
+import './MarkupEditor.css';
 
-export function MarkupEditor({ markdownSource }) {
-  // 1. STATE MANAGEMENT
+export function MarkupEditor({ markdownSource, fileName, onBack, onContentChange }) {
   const [markdown, setMarkdown] = useState(markdownSource || '');
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
-  // --- REFS ---
-  // We use a ref to track if the update is coming from the Textarea or Draft.js
   const isTypingRef = useRef(false);
+  const textareaRef = useRef(null);
+  const cursorRef = useRef(null);
 
-  // --- HANDLE SAVE ---
+  // --- SAVE FUNCTION ---
   const handleSave = async () => {
     if (window.electronAPI) {
-      const result = await window.electronAPI.saveFile(markdown);
-      if (result.success) {
-        alert(`File saved successfully to: ${result.path}`);
-      } else if (!result.cancelled) {
-        alert(`Error saving file: ${result.error}`);
-      }
+      const result = await window.electronAPI.saveFile({ 
+        content: markdown, 
+        defaultName: fileName 
+      });
+      if (result.success) alert(`Saved to: ${result.path}`);
     } else {
-      alert('Save feature requires the Electron desktop app.');
+      alert('Save requires Electron.');
     }
   };
 
-  // --- CONVERSION LOGIC ---
-
-  // 2. MARKDOWN -> DRAFT.JS (With DEBOUNCE)
-  // This logic now waits for you to stop typing for 200ms before running
+  // --- SYNC LOGIC (Keep exactly as before) ---
   useEffect(() => {
-    // If we are currently typing in the Draft.js side, don't overwrite it
     if (isTypingRef.current) return;
-
     const timer = setTimeout(() => {
       const rawData = markdownToDraft(markdown);
       const contentState = convertFromRaw(rawData);
-      // Only update if content is actually different to prevent loops
       setEditorState(EditorState.createWithContent(contentState));
-    }, 200); // <--- 200ms Delay
-
-    return () => clearTimeout(timer); // Cleanup timer on every keystroke
+    }, 200);
+    return () => clearTimeout(timer);
   }, [markdown]);
 
-  // 3. DRAFT.JS -> MARKDOWN
-  const handleDraftChange = (newEditorState) => {
-    // Set flag so the useEffect above knows NOT to re-sync while we are editing this side
-    isTypingRef.current = true;
-    
-    setEditorState(newEditorState);
-    const contentState = newEditorState.getCurrentContent();
-    const rawContentState = convertToRaw(contentState);
-    const newMarkdown = draftToMarkdown(rawContentState);
-    
-    setMarkdown(newMarkdown);
+  useEffect(() => {
+    if (onContentChange) onContentChange(markdown);
+  }, [markdown, onContentChange]);
 
-    // Reset the flag after a short delay so 2-way sync resumes
-    setTimeout(() => {
-      isTypingRef.current = false;
-    }, 500);
+  const handleDraftChange = (newEditorState) => {
+    isTypingRef.current = true;
+    setEditorState(newEditorState);
+    const newMarkdown = draftToMarkdown(convertToRaw(newEditorState.getCurrentContent()));
+    setMarkdown(newMarkdown);
+    setTimeout(() => { isTypingRef.current = false; }, 500);
   };
 
-  // 4. TEXTAREA HANDLER
+  const toggleBlockType = (e, blockType) => {
+    e.preventDefault();
+    isTypingRef.current = true;
+
+    const newState = RichUtils.toggleBlockType(editorState, blockType);
+    handleDraftChange(newState);
+
+    setTimeout(() => { isTypingRef.current = false; }, 500);
+  };
+
+  const toggleInlineStyle = (e, style) => {
+    e.preventDefault();
+    isTypingRef.current = true;
+    const newState = RichUtils.toggleInlineStyle(editorState, style);
+    handleDraftChange(newState);
+    setTimeout(() => { isTypingRef.current = false; }, 500);
+  };
+
+  const StyleButton = ({ label, style }) => {
+    const currentStyle = editorState.getCurrentInlineStyle();
+    const isActive = currentStyle.has(style);
+    return (
+      <button
+        className={`style-button ${isActive ? 'active' : ''}`}
+        onMouseDown={(e) => toggleInlineStyle(e, style)}
+      >
+        {label}
+      </button>
+    );
+  };
+
+  const BlockButton = ({ label, blockType, className }) => {
+    const selection = editorState.getSelection();
+    const blockTypeCurrent = editorState
+      .getCurrentContent()
+      .getBlockForKey(selection.getStartKey())
+      .getType();
+      
+    const isActive = blockTypeCurrent === blockType;
+
+    return (
+      <button
+        className={`style-button ${className || ''} ${isActive ? 'active' : ''}`}
+        onMouseDown={(e) => toggleBlockType(e, blockType)}
+      >
+        {label}
+      </button>
+    );
+  };
+
   const handleTextareaChange = (e) => {
-    // Just update the state. No heavy logic here.
+    cursorRef.current = e.target.selectionStart;
     setMarkdown(e.target.value);
   };
+
+  useEffect(() => {
+    if (textareaRef.current && cursorRef.current !== null) {
+      if (document.activeElement === textareaRef.current) {
+        textareaRef.current.setSelectionRange(cursorRef.current, cursorRef.current);
+      }
+    }
+  }, [markdown]);
 
   return (
     <div className="app-container">
       <div className="toolbar">
-        <h1>Markup</h1>
-        <button onClick={handleSave} className="save-button">
-          💾 Save Document
-        </button>
+        <button onClick={onBack} className="back-button">⬅ Home</button>
+        <h1>{fileName || 'Markup Editor'}</h1>
+        <button onClick={handleSave} className="save-button">💾 Save</button>
       </div>
 
       <div className="split-screen-container">
-        {/* LEFT PANEL: RAW MARKDOWN EDITOR */}
         <textarea
-          className="raw-editor"
+          ref={textareaRef}
+          className="raw-editor panel"
           value={markdown}
           onChange={handleTextareaChange}
         />
 
-        {/* RIGHT PANEL: DRAFT.JS PREVIEW (WYSIWYG) */}
-        <div className="preview-panel">
+        <div className="preview-panel panel">
+          <div className="editor-controls">
+            <StyleButton label="B" style="BOLD" />
+            <StyleButton label="I" style="ITALIC" />
+            <StyleButton label="Code" style="CODE" />
+            
+            <div className="divider"></div>
+
+            <BlockButton label="H1" blockType="header-one" className="header-btn" />
+            <BlockButton label="H2" blockType="header-two" className="header-btn" />
+            <BlockButton label="H3" blockType="header-three" className="header-btn" />
+            
+            <BlockButton label="P" blockType="unstyled" />
+            
+            <div className="divider"></div>
+            
+            <BlockButton label="UL" blockType="unordered-list-item" />
+            <BlockButton label="OL" blockType="ordered-list-item" />
+          </div>
+
           <Editor
             editorState={editorState}
             onChange={handleDraftChange}
-            placeholder="Start writing or editing here..."
+            placeholder="Start writing..."
           />
         </div>
       </div>

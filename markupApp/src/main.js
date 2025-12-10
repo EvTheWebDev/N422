@@ -1,15 +1,13 @@
-// src/main.js
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -20,15 +18,14 @@ const createWindow = () => {
     },
   });
 
-  // --- VITE SPECIFIC LOADING LOGIC ---
-  // This is the magic part that fixes the blank screen with Vite
+  // Vite Loading Logic (Thank you Vite :))
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
-  // Open the DevTools.
+// Open Console
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.webContents.openDevTools();
   }
@@ -48,7 +45,7 @@ app.on('activate', () => {
   }
 });
 
-// --- IPC HANDLERS ---
+
 ipcMain.handle('save-file-dialog', async (event, content) => {
   const { filePath } = await dialog.showSaveDialog({
     title: 'Save Markdown File',
@@ -65,4 +62,21 @@ ipcMain.handle('save-file-dialog', async (event, content) => {
     }
   }
   return { success: false, cancelled: true };
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: 'Markdown', extensions: ['md', 'txt'] }],
+  });
+
+  if (!canceled && filePaths.length > 0) {
+    try {
+      const content = fs.readFileSync(filePaths[0], 'utf8');
+      return { success: true, content, filePath: filePaths[0] };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+  return { success: false, canceled: true };
 });
